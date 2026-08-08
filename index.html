@@ -5,12 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GADA AI VIDEO - Secure Platform</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0b0f19; color: #ffffff; margin: 0; padding: 15px; user-select: none; -webkit-user-select: none; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0b0f19; color: #ffffff; margin: 0; padding: 15px; }
         .container { max-width: 650px; margin: 0 auto; background: #151c2c; padding: 25px; border-radius: 16px; border: 1px solid #1e293b; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         h1 { color: #38bdf8; text-align: center; margin-bottom: 2px; font-size: 26px; }
         p.subtitle { text-align: center; color: #94a3b8; font-size: 13px; margin-top: 0; margin-bottom: 20px; }
         label { display: block; margin-top: 15px; font-weight: 600; font-size: 13px; color: #cbd5e1; }
-        textarea, select, input { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box; font-size: 14px; }
+        
+        /* Bada damar Copy/Paste a kan Textarea da Inputs */
+        textarea, select, input { 
+            width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; 
+            border: 1px solid #334155; background: #0f172a; color: #fff; 
+            box-sizing: border-box; font-size: 14px; 
+            user-select: text !important; -webkit-user-select: text !important; 
+        }
+        
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card { background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid #334155; margin-top: 15px; }
         .gold { border-color: #eab308; }
@@ -25,16 +33,15 @@
         .progress-bg { background: #334155; border-radius: 5px; height: 10px; width: 100%; margin-top: 8px; }
         .video-box { display: none; margin-top: 20px; text-align: center; }
         
-        /* Security Overlay */
-        video { width: 100%; border-radius: 10px; border: 1px solid #38bdf8; pointer-events: none; }
-        .protected-player { position: relative; display: inline-block; width: 100%; }
+        /* Kare Bidiyo Kawai */
+        video { width: 100%; border-radius: 10px; border: 1px solid #38bdf8; user-select: none; -webkit-user-select: none; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
 <div class="container">
     <h1>GADA AI VIDEO</h1>
-    <p class="subtitle">Tsarin Sarrafa Bidiyo na AI da Kariya daga Sata</p>
+    <p class="subtitle">Tsarin Sarrafa Bidiyo na AI da Karɓar Subscriptions</p>
 
     <div style="text-align: right;">
         <small style="color: #64748b; cursor: pointer; font-weight: bold;" onclick="toggleAdmin()">⚙️ Owner Admin</small>
@@ -74,7 +81,7 @@
     <hr style="margin-top: 25px; border-color: #1e293b;">
 
     <label>1. Rubuta Labarinka (Text Prompt):</label>
-    <textarea id="prompt" rows="3" placeholder="Rubuta labarin bidiyon da kake so a nan..."></textarea>
+    <textarea id="prompt" rows="3" placeholder="Rubuta ko manna (paste) labarin bidiyon da kake so a nan..."></textarea>
 
     <label>2. Loda Hoton Kamanni (Character Consistency - Optional):</label>
     <input type="file" id="imageInput" accept="image/*">
@@ -114,10 +121,10 @@
     <div id="videoArea" class="video-box">
         <h3 style="color: #22c55e; margin-bottom: 10px;">An Kammala Bidiyonka!</h3>
         <div class="protected-player">
-            <video id="outputVideo" controls controlsList="nodownload" oncontextmenu="return false;"></video>
+            <video id="outputVideo" controls playsinline controlsList="nodownload" oncontextmenu="return false;"></video>
         </div>
         <div id="downloadContainer" style="display: none;">
-            <a id="downloadBtn" href="#" download="gada-ai-video.mp4">
+            <a id="downloadBtn" href="#" target="_blank" download="gada-ai-video.mp4">
                 <button class="btn" style="background: #22c55e; margin-top: 10px;">Download Video (MP4)</button>
             </a>
         </div>
@@ -146,7 +153,7 @@
     }
 
     function initiatePayment(amount, plan) {
-        alert(`Tsarin Paystack: Muna kan haɗa kofofin biya na ₦${amount} na tsarin ${plan}. Za a buɗe asusun biya da zarar an sanya Paystack Key.`);
+        alert(`Tsarin Paystack: Muna kan haɗa kofofin biya na ₦${amount} na tsarin ${plan}.`);
         hasSubscribed = true; 
     }
 
@@ -161,19 +168,6 @@
             return;
         }
 
-        const response = await fetch('/api/generate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt, language, duration, resolution, isOwnerAdmin: isAdmin })
-        });
-
-        const result = await response.json();
-
-        if (!result.success) {
-            alert(result.message);
-            return;
-        }
-
         document.getElementById('videoArea').style.display = 'none';
         document.getElementById('progressArea').style.display = 'block';
         let progress = 0;
@@ -181,7 +175,7 @@
         const percentText = document.getElementById('percentText');
         const statusText = document.getElementById('statusText');
 
-        const interval = setInterval(() => {
+        const interval = setInterval(async () => {
             progress += 10;
             bar.style.width = progress + '%';
             percentText.innerText = progress + '%';
@@ -192,31 +186,42 @@
 
             if (progress >= 100) {
                 clearInterval(interval);
-                document.getElementById('progressArea').style.display = 'none';
                 
-                const videoElement = document.getElementById('outputVideo');
-                const downloadLink = document.getElementById('downloadBtn');
-                videoElement.src = result.video_url;
-                downloadLink.href = result.video_url;
+                try {
+                    const response = await fetch('/api/generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt, language, duration, resolution, isOwnerAdmin: isAdmin })
+                    });
+                    const result = await response.json();
 
-                // Security Rule: Display download button only for subscribers/admin
-                if (hasSubscribed || isAdmin) {
-                    document.getElementById('downloadContainer').style.display = 'block';
-                } else {
-                    document.getElementById('downloadContainer').style.display = 'none';
+                    document.getElementById('progressArea').style.display = 'none';
+
+                    if (result.success) {
+                        const videoElement = document.getElementById('outputVideo');
+                        const downloadLink = document.getElementById('downloadBtn');
+                        
+                        videoElement.src = result.video_url;
+                        videoElement.load();
+                        downloadLink.href = result.video_url;
+
+                        if (hasSubscribed || isAdmin) {
+                            document.getElementById('downloadContainer').style.display = 'block';
+                        } else {
+                            document.getElementById('downloadContainer').style.display = 'none';
+                        }
+
+                        document.getElementById('videoArea').style.display = 'block';
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (e) {
+                    document.getElementById('progressArea').style.display = 'none';
+                    alert("Kuskure wajen haɗawa da Server.");
                 }
-
-                document.getElementById('videoArea').style.display = 'block';
             }
-        }, 500);
+        }, 300);
     }
-
-    // Security Features
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-            e.preventDefault();
-        }
-    });
 </script>
 
 </body>
