@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ha">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GADA AI VIDEO</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #0f172a; color: #ffffff; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; }
+        h1 { color: #38bdf8; text-align: center; margin-bottom: 5px; }
+        p.subtitle { text-align: center; color: #94a3b8; font-size: 14px; margin-top: 0; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; }
+        textarea, select, input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .card { background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; margin-top: 15px; }
+        .gold { border-color: #eab308; }
+        .btn { background: #0284c7; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        .btn-gold { background: #ca8a04; }
+        .btn-green { background: #22c55e; margin-top: 20px; font-size: 16px; }
+        .admin-box { background: #18181b; padding: 10px; border-radius: 6px; border: 1px dashed #ef4444; margin-top: 20px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>GADA AI VIDEO</h1>
+    <p class="subtitle">Manhajjar Kirƙirar Bidiyo ta AI</p>
+
+    <!-- Admin Switch -->
+    <div style="text-align: right;">
+        <small style="color: #64748b; cursor: pointer;" onclick="toggleAdmin()">⚙️ Admin Access</small>
+    </div>
+
+    <div id="adminPanel" class="admin-box">
+        <label style="color: #ef4444;">Admin Passcode:</label>
+        <input type="password" id="adminCode" placeholder="Shigar da Admin Password">
+        <button class="btn" onclick="activateAdmin()" style="background: #dc2626; margin-top: 5px; padding: 6px;">Buɗe Free Access</button>
+    </div>
+
+    <!-- Harsuna 8 -->
+    <label>Zaɓi Harshe / Language:</label>
+    <select id="language">
+        <option value="HAUSA">Hausa</option>
+        <option value="ENGLISH">English</option>
+        <option value="ARABIC">Arabic</option>
+        <option value="FRENCH">French</option>
+        <option value="HINDI">Hindi</option>
+        <option value="CHINESE">Chinese</option>
+        <option value="IGBO">Igbo</option>
+        <option value="YORUBA">Yoruba</option>
+    </select>
+
+    <!-- Subscriptions -->
+    <label>Tsarin Biya (Subscriptions):</label>
+    <div class="card">
+        <strong style="color: #38bdf8;">Standard Plan - ₦2,000 / Wata</strong>
+        <p style="font-size: 12px; color: #cbd5e1; margin: 5px 0;">• Bidiyo na mintuna 5 zuwa 8<br>• Resolution: 360p, 480p, 720p HD, 1080p Full HD</p>
+        <button class="btn" onclick="pay(2000, 'STANDARD')">Biya ₦2,000 Yanzu</button>
+    </div>
+
+    <div class="card gold">
+        <strong style="color: #eab308;">Series Upgrade - ₦5,000 / Wata</strong>
+        <p style="font-size: 12px; color: #cbd5e1; margin: 5px 0;">• Kirƙirar Bidiyo na Series (Mintuna 20+)<br>• Cikakken iko na Standard Plan</p>
+        <button class="btn btn-gold" onclick="pay(5000, 'SERIES')">Biya ₦5,000 (Upgrade)</button>
+    </div>
+
+    <!-- Studio Section -->
+    <hr style="margin-top: 25px; border-color: #334155;">
+    
+    <label>Rubuta Tunaninka (Prompt):</label>
+    <textarea id="prompt" rows="4" placeholder="Rubuta labarin bidiyon da kake so a nan..."></textarea>
+
+    <div class="grid">
+        <div>
+            <label>Tsawon Minti:</label>
+            <select id="duration">
+                <option value="5">5 Minutes</option>
+                <option value="8">8 Minutes</option>
+                <option value="20">20 Minutes (Series)</option>
+            </select>
+        </div>
+        <div>
+            <label>Resolution:</label>
+            <select id="resolution">
+                <option value="360p">360p SD</option>
+                <option value="480p">480p SD</option>
+                <option value="720p">720p HD</option>
+                <option value="1080p">1080p Full HD</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="btn btn-green" onclick="generateVideo()">Kirƙiri Bidiyo Yanzu ➔</button>
+</div>
+
+<script>
+    let isAdmin = false;
+
+    function toggleAdmin() {
+        const panel = document.getElementById('adminPanel');
+        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function activateAdmin() {
+        const code = document.getElementById('adminCode').value;
+        if (code === 'gada123') { // Admin password
+            isAdmin = true;
+            alert('An buɗe Admin Privileges! Za ka iya amfani da komai kyauta.');
+        } else {
+            alert('Kuskure: Password bai dace ba!');
+        }
+    }
+
+    function pay(amount, plan) {
+        alert('Za a tura kuɗin ₦' + amount + ' na tsarin ' + plan + ' kai tsaye zuwa bankinka via Paystack.');
+    }
+
+    function generateVideo() {
+        const duration = document.getElementById('duration').value;
+        if (duration == 20 && !isAdmin) {
+            alert('Kuskure: Bidiyon Minti 20 (Series) yana buƙatar Subscription na ₦5,000.');
+            return;
+        }
+        alert('AI tana sarrafa bidiyonka yanzu...');
+    }
+</script>
+
+</body>
+</html>
