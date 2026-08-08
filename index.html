@@ -3,38 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GADA AI VIDEO</title>
+    <title>GADA AI VIDEO - Advanced Engine</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #0f172a; color: #ffffff; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; }
-        h1 { color: #38bdf8; text-align: center; margin-bottom: 5px; }
-        p.subtitle { text-align: center; color: #94a3b8; font-size: 14px; margin-top: 0; }
-        label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; }
-        textarea, select, input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .card { background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; margin-top: 15px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0b0f19; color: #ffffff; margin: 0; padding: 15px; }
+        .container { max-width: 650px; margin: 0 auto; background: #151c2c; padding: 25px; border-radius: 16px; border: 1px solid #1e293b; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h1 { color: #38bdf8; text-align: center; margin-bottom: 2px; font-size: 26px; }
+        p.subtitle { text-align: center; color: #94a3b8; font-size: 13px; margin-top: 0; margin-bottom: 20px; }
+        label { display: block; margin-top: 15px; font-weight: 600; font-size: 13px; color: #cbd5e1; }
+        textarea, select, input { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; box-sizing: border-box; font-size: 14px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .card { background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid #334155; margin-top: 15px; }
         .gold { border-color: #eab308; }
-        .btn { background: #0284c7; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        .btn { background: #0284c7; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; transition: 0.3s; }
+        .btn:hover { opacity: 0.9; }
         .btn-gold { background: #ca8a04; }
-        .btn-green { background: #22c55e; margin-top: 20px; font-size: 16px; }
-        .admin-box { background: #18181b; padding: 10px; border-radius: 6px; border: 1px dashed #ef4444; margin-top: 20px; display: none; }
+        .btn-green { background: #16a34a; margin-top: 20px; font-size: 16px; padding: 14px; }
+        .admin-box { background: #18181b; padding: 12px; border-radius: 8px; border: 1px dashed #ef4444; margin-top: 10px; display: none; }
+        
+        /* Progress & Video Area */
+        .progress-container { display: none; margin-top: 20px; background: #0f172a; padding: 15px; border-radius: 10px; border: 1px solid #38bdf8; }
+        .progress-bar { width: 0%; height: 10px; background: #38bdf8; border-radius: 5px; transition: width 0.4s; }
+        .progress-bg { background: #334155; border-radius: 5px; height: 10px; width: 100%; margin-top: 8px; }
+        .video-box { display: none; margin-top: 20px; text-align: center; }
+        video { width: 100%; border-radius: 10px; border: 1px solid #38bdf8; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>GADA AI VIDEO</h1>
-    <p class="subtitle">Manhajjar Kirƙirar Bidiyo ta AI</p>
+    <p class="subtitle">Tsarin Sarrafa Bidiyo na AI da Karɓar Subscriptions</p>
 
-    <!-- Admin Switch -->
+    <!-- Admin Access Switch -->
     <div style="text-align: right;">
-        <small style="color: #64748b; cursor: pointer;" onclick="toggleAdmin()">⚙️ Admin Access</small>
+        <small style="color: #64748b; cursor: pointer; font-weight: bold;" onclick="toggleAdmin()">⚙️ Owner Admin</small>
     </div>
 
     <div id="adminPanel" class="admin-box">
-        <label style="color: #ef4444;">Admin Passcode:</label>
+        <label style="color: #ef4444; margin-top:0;">Owner Passcode:</label>
         <input type="password" id="adminCode" placeholder="Shigar da Admin Password">
-        <button class="btn" onclick="activateAdmin()" style="background: #dc2626; margin-top: 5px; padding: 6px;">Buɗe Free Access</button>
+        <button class="btn" onclick="activateAdmin()" style="background: #dc2626; margin-top: 8px; padding: 8px;">Buɗe Free Unlimited Access</button>
     </div>
 
     <!-- Harsuna 8 -->
@@ -54,21 +62,24 @@
     <label>Tsarin Biya (Subscriptions):</label>
     <div class="card">
         <strong style="color: #38bdf8;">Standard Plan - ₦2,000 / Wata</strong>
-        <p style="font-size: 12px; color: #cbd5e1; margin: 5px 0;">• Bidiyo na mintuna 5 zuwa 8<br>• Resolution: 360p, 480p, 720p HD, 1080p Full HD</p>
-        <button class="btn" onclick="pay(2000, 'STANDARD')">Biya ₦2,000 Yanzu</button>
+        <p style="font-size: 12px; color: #cbd5e1; margin: 5px 0;">• Bidiyo na mintuna 5 zuwa 8<br>• Resolutions: 360p, 480p, 720p HD, 1080p Full HD</p>
+        <button class="btn" onclick="initiatePayment(2000, 'STANDARD')">Biya ₦2,000 Yanzu</button>
     </div>
 
     <div class="card gold">
         <strong style="color: #eab308;">Series Upgrade - ₦5,000 / Wata</strong>
-        <p style="font-size: 12px; color: #cbd5e1; margin: 5px 0;">• Kirƙirar Bidiyo na Series (Mintuna 20+)<br>• Cikakken iko na Standard Plan</p>
-        <button class="btn btn-gold" onclick="pay(5000, 'SERIES')">Biya ₦5,000 (Upgrade)</button>
+        <p style="font-size: 12px; color: #cbd5e1; margin: 5px 0;">• Kirƙirar Bidiyo na Series (Mintuna 20+)<br>• Character Consistency & Full Control</p>
+        <button class="btn btn-gold" onclick="initiatePayment(5000, 'SERIES')">Biya ₦5,000 (Series Upgrade)</button>
     </div>
 
-    <!-- Studio Section -->
-    <hr style="margin-top: 25px; border-color: #334155;">
-    
-    <label>Rubuta Tunaninka (Prompt):</label>
-    <textarea id="prompt" rows="4" placeholder="Rubuta labarin bidiyon da kake so a nan..."></textarea>
+    <hr style="margin-top: 25px; border-color: #1e293b;">
+
+    <!-- Input Versatility -->
+    <label>1. Rubuta Labarinka (Text Prompt):</label>
+    <textarea id="prompt" rows="3" placeholder="Rubuta bayani game da bidiyon da kake so a nan..."></textarea>
+
+    <label>2. Loda Hoton Kamanni (Character Consistency - Optional):</label>
+    <input type="file" id="imageInput" accept="image/*">
 
     <div class="grid">
         <div>
@@ -90,7 +101,27 @@
         </div>
     </div>
 
-    <button class="btn btn-green" onclick="generateVideo()">Kirƙiri Bidiyo Yanzu ➔</button>
+    <button class="btn btn-green" id="generateBtn" onclick="processVideo()">Kirƙiri Bidiyo Yanzu ➔</button>
+
+    <!-- Real-time Loading Status -->
+    <div id="progressArea" class="progress-container">
+        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+            <span id="statusText" style="color: #38bdf8;">AI tana gina Scenes...</span>
+            <span id="percentText" style="color: #38bdf8; font-weight: bold;">0%</span>
+        </div>
+        <div class="progress-bg">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Output Video Player -->
+    <div id="videoArea" class="video-box">
+        <h3 style="color: #22c55e; margin-bottom: 10px;">An Kammala Bidiyonka!</h3>
+        <video id="outputVideo" controls></video>
+        <a id="downloadBtn" href="#" download="gada-ai-video.mp4">
+            <button class="btn" style="background: #22c55e; margin-top: 10px;">Download Video (MP4)</button>
+        </a>
+    </div>
 </div>
 
 <script>
@@ -103,25 +134,74 @@
 
     function activateAdmin() {
         const code = document.getElementById('adminCode').value;
-        if (code === 'gada123') { // Admin password
+        if (code === 'gada123') {
             isAdmin = true;
-            alert('An buɗe Admin Privileges! Za ka iya amfani da komai kyauta.');
+            alert('An buɗe Owner Admin Access! Za ka iya amfani da kowane tsari kyauta.');
+            document.getElementById('adminPanel').style.display = 'none';
         } else {
-            alert('Kuskure: Password bai dace ba!');
+            alert('Kuskure: Admin Password bai dace ba!');
         }
     }
 
-    function pay(amount, plan) {
-        alert('Za a tura kuɗin ₦' + amount + ' na tsarin ' + plan + ' kai tsaye zuwa bankinka via Paystack.');
+    async function initiatePayment(amount, plan) {
+        alert(`Za a tura ka zuwa Paystack don biyan ₦${amount} na tsarin ${plan}. (Connect your Paystack Account Keys in Vercel settings to go fully live).`);
     }
 
-    function generateVideo() {
+    async function processVideo() {
+        const prompt = document.getElementById('prompt').value;
+        const language = document.getElementById('language').value;
         const duration = document.getElementById('duration').value;
-        if (duration == 20 && !isAdmin) {
-            alert('Kuskure: Bidiyon Minti 20 (Series) yana buƙatar Subscription na ₦5,000.');
+        const resolution = document.getElementById('resolution').value;
+
+        if (!prompt) {
+            alert('Saka labarin bidiyoyinka a wajen prompt kafin ka ci gaba.');
             return;
         }
-        alert('AI tana sarrafa bidiyonka yanzu...');
+
+        // Call Backend API
+        const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt, language, duration, resolution, isOwnerAdmin: isAdmin })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            alert(result.message);
+            return;
+        }
+
+        // Display Real-time Progress Animation
+        document.getElementById('videoArea').style.display = 'none';
+        document.getElementById('progressArea').style.display = 'block';
+        let progress = 0;
+        const bar = document.getElementById('progressBar');
+        const percentText = document.getElementById('percentText');
+        const statusText = document.getElementById('statusText');
+
+        const interval = setInterval(() => {
+            progress += 10;
+            bar.style.width = progress + '%';
+            percentText.innerText = progress + '%';
+
+            if (progress === 30) statusText.innerText = "Ana rarraba Prompt zuwa Scenes...";
+            if (progress === 60) statusText.innerText = "Ana kiyaye Kamanni & Muryar Harshe...";
+            if (progress === 90) statusText.innerText = "Ana haɗe clips tare da Cloud FFmpeg Engine...";
+
+            if (progress >= 100) {
+                clearInterval(interval);
+                document.getElementById('progressArea').style.display = 'none';
+                
+                // Load Real Video into Player
+                const videoElement = document.getElementById('outputVideo');
+                const downloadLink = document.getElementById('downloadBtn');
+                videoElement.src = result.video_url;
+                downloadLink.href = result.video_url;
+
+                document.getElementById('videoArea').style.display = 'block';
+            }
+        }, 500);
     }
 </script>
 
