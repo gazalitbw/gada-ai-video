@@ -150,7 +150,11 @@
 
     function initiatePayment(amount, plan) {
         alert(`Tsarin Paystack: Biya ₦${amount} na tsarin ${plan}.`);
-        hasSubscribed = true; 
+        hasSubscribed = true;
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     async function processVideo() {
@@ -166,56 +170,92 @@
 
         document.getElementById('videoArea').style.display = 'none';
         document.getElementById('progressArea').style.display = 'block';
-        let progress = 0;
         const bar = document.getElementById('progressBar');
         const percentText = document.getElementById('percentText');
         const statusText = document.getElementById('statusText');
 
-        const interval = setInterval(async () => {
-            progress += 20;
-            bar.style.width = progress + '%';
-            percentText.innerText = progress + '%';
+        bar.style.width = '5%';
+        percentText.innerText = '5%';
+        statusText.innerText = 'Ana aika prompt zuwa AI...';
 
-            if (progress === 40) statusText.innerText = "Ana rarraba Prompt zuwa Scenes...";
-            if (progress === 80) statusText.innerText = "Ana haɗe clips tare da Cloud Engine...";
+        try {
+            const genResponse = await fetch('/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt, language, duration, resolution, isOwnerAdmin: isAdmin })
+            });
+            const genResult = await genResponse.json();
 
-            if (progress >= 100) {
-                clearInterval(interval);
-                
-                let videoUrl = "https://www.w3schools.com/html/mov_bbb.mp4"; // Fallback Link
-
-                try {
-                    const response = await fetch('/api/generate', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ prompt, language, duration, resolution, isOwnerAdmin: isAdmin })
-                    });
-                    const result = await response.json();
-                    if (result.success && result.video_url) {
-                        videoUrl = result.video_url;
-                    }
-                } catch (e) {
-                    console.log("Using Direct Stream Engine Fallback");
-                }
-
-                document.getElementById('progressArea').style.display = 'none';
-
-                const videoElement = document.getElementById('outputVideo');
-                const downloadLink = document.getElementById('downloadBtn');
-                
-                videoElement.src = videoUrl;
-                videoElement.load();
-                downloadLink.href = videoUrl;
-
-                if (hasSubscribed || isAdmin) {
-                    document.getElementById('downloadContainer').style.display = 'block';
-                } else {
-                    document.getElementById('downloadContainer').style.display = 'none';
-                }
-
-                document.getElementById('videoArea').style.display = 'block';
+            if (!genResult.success) {
+                throw new Error(genResult.message || 'AI ta ki karɓar buƙatarmu.');
             }
-        }, 200);
+
+            const statusUrl = genResult.status_url;
+            const responseUrl = genResult.response_url;
+
+            bar.style.width = '15%';
+            percentText.innerText = '15%';
+            statusText.innerText = 'An fara sarrafa bidiyon, ana jira...';
+
+            let videoUrl = null;
+            let attempts = 0;
+            const maxAttempts = 60;
+
+            while (attempts < maxAttempts) {
+                await sleep(8000);
+                attempts++;
+
+                const statusParams = new URLSearchParams({
+                    status_url: statusUrl,
+                    response_url: responseUrl,
+                });
+                const statusResponse = await fetch('/api/status?' + statusParams.toString());
+                const statusResult = await statusResponse.json();
+
+                if (!statusResult.success) {
+                    throw new Error(statusResult.message || 'An kasa duba matsayin bidiyo.');
+                }
+
+                const simulatedProgress = Math.min(15 + attempts * 3, 90);
+                bar.style.width = simulatedProgress + '%';
+                percentText.innerText = simulatedProgress + '%';
+
+                if (statusResult.status === 'COMPLETED') {
+                    videoUrl = statusResult.video_url;
+                    break;
+                } else {
+                    statusText.innerText = 'Ana ci gaba da sarrafa bidiyon (' + (attempts * 8) + 's)...';
+                }
+            }
+
+            if (!videoUrl) {
+                throw new Error('Bidiyon bai shirya ba cikin lokacin da aka bayar — ka sake gwadawa.');
+            }
+
+            bar.style.width = '100%';
+            percentText.innerText = '100%';
+            document.getElementById('progressArea').style.display = 'none';
+
+            const videoElement = document.getElementById('outputVideo');
+            const downloadLink = document.getElementById('downloadBtn');
+
+            videoElement.src = videoUrl;
+            videoElement.load();
+            downloadLink.href = videoUrl;
+
+            if (hasSubscribed || isAdmin) {
+                document.getElementById('downloadContainer').style.display = 'block';
+            } else {
+                document.getElementById('downloadContainer').style.display = 'none';
+            }
+
+            document.getElementById('videoArea').style.display = 'block';
+
+        } catch (err) {
+            console.error('processVideo kuskure:', err);
+            document.getElementById('progressArea').style.display = 'none';
+            alert('Kuskure ya faru wajen kirkirar bidiyo: ' + err.message);
+        }
     }
 </script>
 
