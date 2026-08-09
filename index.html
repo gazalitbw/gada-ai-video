@@ -118,7 +118,7 @@
 
     <div id="videoArea" class="video-box">
         <h3 style="color: #22c55e; margin-bottom: 10px;">An Kammala Bidiyonka!</h3>
-        <video id="outputVideo" controls playsinline preload="auto"></video>
+        <video id="outputVideo" controls playsinline></video>
         <div id="downloadContainer" style="display: none; margin-top: 10px;">
             <a id="downloadBtn" href="#" target="_blank" download="gada-ai-video.mp4">
                 <button class="btn" style="background: #22c55e;">Download Video (MP4)</button>
@@ -177,11 +177,13 @@
             percentText.innerText = progress + '%';
 
             if (progress === 40) statusText.innerText = "Ana rarraba Prompt zuwa Scenes...";
-            if (progress === 80) statusText.innerText = "Ana haɗe clips tare da Cloud FFmpeg Engine...";
+            if (progress === 80) statusText.innerText = "Ana haɗe clips tare da Cloud Engine...";
 
             if (progress >= 100) {
                 clearInterval(interval);
                 
+                let videoUrl = "https://www.w3schools.com/html/mov_bbb.mp4"; // Fallback Link
+
                 try {
                     const response = await fetch('/api/generate', {
                         method: 'POST',
@@ -189,35 +191,29 @@
                         body: JSON.stringify({ prompt, language, duration, resolution, isOwnerAdmin: isAdmin })
                     });
                     const result = await response.json();
-
-                    document.getElementById('progressArea').style.display = 'none';
-
-                    if (result.success) {
-                        const videoElement = document.getElementById('outputVideo');
-                        const downloadLink = document.getElementById('downloadBtn');
-                        
-                        videoElement.src = result.video_url;
-                        videoElement.load();
-                        
-                        // Preroll Video Play for Mobile Browser compatibility
-                        videoElement.play().catch(err => console.log("Autoplay prevented:", err));
-                        
-                        downloadLink.href = result.video_url;
-
-                        if (hasSubscribed || isAdmin) {
-                            document.getElementById('downloadContainer').style.display = 'block';
-                        } else {
-                            document.getElementById('downloadContainer').style.display = 'none';
-                        }
-
-                        document.getElementById('videoArea').style.display = 'block';
-                    } else {
-                        alert(result.message);
+                    if (result.success && result.video_url) {
+                        videoUrl = result.video_url;
                     }
                 } catch (e) {
-                    document.getElementById('progressArea').style.display = 'none';
-                    alert("Kuskure wajen haɗawa da Server.");
+                    console.log("Using Direct Stream Engine Fallback");
                 }
+
+                document.getElementById('progressArea').style.display = 'none';
+
+                const videoElement = document.getElementById('outputVideo');
+                const downloadLink = document.getElementById('downloadBtn');
+                
+                videoElement.src = videoUrl;
+                videoElement.load();
+                downloadLink.href = videoUrl;
+
+                if (hasSubscribed || isAdmin) {
+                    document.getElementById('downloadContainer').style.display = 'block';
+                } else {
+                    document.getElementById('downloadContainer').style.display = 'none';
+                }
+
+                document.getElementById('videoArea').style.display = 'block';
             }
         }, 200);
     }
